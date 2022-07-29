@@ -14,6 +14,165 @@
         directors, and genres. <br> Users will be able to sign up, update their personal information, and create a list
         of their favorite movies.
     </p>
-</body>
 
-</html>
+    <table class="table table-bordered ">
+        <thead class="table-primary text-center">
+            <tr>
+                <th scope="col">Description</th>
+                <th scope="col">URL</th>
+                <th scope="col">HTTP Method</th>
+                <th scope="col">Requests body data format</th>
+                <th scope="col">Requests body data format</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Return a list of ALL movies to the user</td>
+                <td>/movies</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about all the movies</td>
+            </tr>
+            <tr>
+                <td>Return data about a single movie by title to the user</td>
+                <td>/movies/:title</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about a single movie <br>
+                    <code class="text-primary">
+                                {
+                                "Title": "The Fountain", <br>
+                                "Description": "As a modern-day scientist, Tommy is struggling with mortality, desperately searching for the medical
+                                breakthrough that will save the life of his cancer-stricken wife, Izzi.",<br>
+                                "Genre": {<br>
+                                "Name": "Drama",<br>
+                                "Description": "In film and television, drama is a category of narrative fiction(or semi- fiction) intended to be more
+                                serious than humorous in tone."<br>
+                                },<br>
+                                "Director": {<br>
+                                "Name": "Darren Aronofsky",<br>
+                                "Bio": "Darren Aronofsky was born February 12, 1969, in Brooklyn, New York. Growing up, Darren was always artistic: he
+                                loved classic movies and, as a teenager, he even spent time doing graffiti art. After high school, Darren went to
+                                Harvard University to study film (both live-action and animation). He won several film awards after completing his
+                                senior thesis film, Supermarket Sweep, starring Sean Gillette, which went on to becoming a National Student Academy
+                                Award finalist. Aronofsky didn't make a feature film until five years later, in February 1996, where he began creating
+                                the concept for Pi (1998). After Darren's script for Pi (1998) received great reactions from friends, he began
+                                production. The film re-teamed Aronofsky with Gillette, who played the lead. This went on to further successes, such as
+                                Requiem for a Dream (2000), The Wrestler (2008) and Black Swan (2010). Most recently, he completed the films Noah (2014)
+                                and Mother! (2017).",<br>
+                                "Birth": 1969 <br>
+                                }
+                                }
+                            </code>
+                </td>
+            </tr>
+            <tr>
+                <td>Return data about a single movie by genre to the user</td>
+                <td>/movies/genre/:name</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about a single movie <br>
+                    <code class="text-primary">
+                                {
+                                    "name": "Drama", <br>
+                                    "description": "In film and television, drama is a category or genre of narrative fiction (or semi-fiction) intended to be more serious than humorous in tone."
+                                }
+                            </code>
+                </td>
+            </tr>
+            <tr>
+                <td>Return data about a single movie by director to the user</td>
+                <td>/movies/director/:name</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about a single movie <br>
+                    <code class="text-primary">
+                                "Director": {<br>
+                                "Name": "Rob Reiner",<br>
+                                "Bio": "When Rob graduated high school, his parents advised him to participate in Summer Theatre. Reiner got a job as an
+                                apprentice in the Bucks County Playhouse in Pennsylvania. He went to be further educated at UCLA Film School. Reiner
+                                felt he still wasn't successful even having a recurring role on one of the biggest shows in the country, All in the
+                                Family. Reiner began his directing career with the Oscar-nominated films This Is Spinal Tap, Stand By Me, and The
+                                Princess Bride.",<br>
+                                "Birth": 1947.0 <br>
+                                }
+                            </code>
+                </td>
+            </tr>
+            <tr>
+                <td>Allow new users to register</td>
+                <td>/users</td>
+                <td>POST</td>
+                <td>A JSON object holding data about the user to add, structured like: <br>
+                    <code class="text-primary">
+                                    {
+                                    "name":"Dean",
+                                    "favoriteMovies":[]
+                                    }
+                                    </code>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Allow users to update their user info (username)</td>
+                <td>/users/:id</td>
+                <td>PUT</td>
+                <td>A JSON object holding data about the user to update, structured like: <br>
+                    <code class="text-primary">
+                                {
+                                "name": "Updated name"
+                                }
+                            </code>
+                </td>
+                <td>A JSON object holding data about teh user update <br>
+                    <code class="text-primary">
+                                {
+                                "name": "Updated name"
+                                }
+                            </code>
+                </td>
+            </tr>
+            <tr>
+                <td>Allow users to add a movie from their list of favorites (showing only a text that a movie has
+                    been added)</td>
+                <td>/users/:id/:movieTitle</td>
+                <td>DELETE</td>
+                <td>None</td>
+                <td>A JSON object holding data about the user<br>
+                    <code class="text-primary">
+                                            {
+                                            id: 2,
+                                            name: 'Nick',
+                                            favoriteMovies: ["The Fountain"]
+                                            }
+                                        </code>
+                </td>
+            </tr>
+            <tr>
+                <td>Allow users to remove a movie from their list of favorites (showing only a text that a movie has
+                    been removed)</td>
+                <td>/users/:id/:movieTitle</td>
+                <td>DELETE</td>
+                <td>None</td>
+                <td>A JSON object holding data about the user<br>
+                    <code class="text-primary">
+                                {
+                                id: 2,
+                                name: 'Nick',
+                                favoriteMovies: ["The Fountain"]
+                                }
+                            </code>
+                </td>
+            </tr>
+            <tr>
+                <td>Allow existing users to deregister (showing only a text that a user email has been removed)</td>
+                <td>/users/:username</td>
+                <td>DELETE</td>
+                <td>None</td>
+                <td>A text message indicates weather the existing user has been successfully delete</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</body>
