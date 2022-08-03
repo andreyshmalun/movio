@@ -15,6 +15,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(morgan('common'));
 
+let auth = require('./auth')(app);
+const passport = require('passport');
+require('./passport');
+
+
 mongoose.connect('mongodb://localhost:27017/movioDB', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -30,7 +35,7 @@ app.get('/documentation', (req, res) => {
 });
 
 //return JSON object when at /movies
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
         .then((movies) => {
             res.status(201).json(movies);
