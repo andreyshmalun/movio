@@ -10,6 +10,7 @@ const app = express(),
   Users = Models.User;
 
 
+// mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true }) 
 
 mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
@@ -21,12 +22,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(morgan('common'));
 
+
+
+require('./auth')(app);
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
-
 app.use(cors());
-
-let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
 
