@@ -1,20 +1,15 @@
 const express = require('express'),
   morgan = require('morgan'),
   bodyParser = require('body-parser'),
-  uuid = require('uuid'), //remove?
   //Integrating Mongoose with a REST API
   mongoose = require('mongoose'),
   Models = require('./models.js');
-
+require('uuid');
 const app = express(),
   Movies = Models.Movie,
   Users = Models.User;
 
 
-// mongoose.connect('mongodb://localhost:27017/movioDB', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
 
 mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
@@ -47,20 +42,16 @@ app.get('/documentation', (req, res) => {
 });
 
 //return JSON object when at /movies
-app.get(
-  '/movies',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    Movies.find()
-      .then((movies) => {
-        res.status(201).json(movies);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-      });
-  }
-);
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Movies.find()
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    });
+});
 
 //return JSON object when at /users
 app.get('/users', (req, res) => {
