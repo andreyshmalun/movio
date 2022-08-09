@@ -10,9 +10,7 @@ const app = express(),
   Users = Models.User;
 
 
-// mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true }) 
-
-mongoose.connect(process.env.CONNECTION_URI, {
+mongoose.connect(process.env.CONNECTION_URI || 'mongodb://localhost:27017/movioDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -38,6 +36,11 @@ app.get('/documentation', (req, res) => {
   res.sendFile('public/documentation.html', { root: __dirname });
 });
 
+const handleError = (error, res) => {
+  console.error(error);
+  res.status(500).send('Something went wrong: ' + error);
+};
+
 //return JSON object when at /movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.find()
@@ -45,8 +48,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) 
       res.status(201).json(movies);
     })
     .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error: ' + error);
+      handleError(error, res);
     });
 });
 
@@ -56,9 +58,8 @@ app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) =
     .then((users) => {
       res.status(201).json(users);
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
+    .catch((error) => {
+      handleError(error, res);
     });
 });
 
@@ -68,9 +69,8 @@ app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req
     .then((movie) => {
       res.json(movie);
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
+    .catch((error) => {
+      handleError(error, res);
     });
 });
 
@@ -80,9 +80,8 @@ app.get('/movies/genres/:Name', passport.authenticate('jwt', { session: false })
     .then((movie) => {
       res.json(movie.Genre);
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
+    .catch((error) => {
+      handleError(error, res);
     });
 });
 
@@ -92,9 +91,8 @@ app.get('/movies/directors/:Name', passport.authenticate('jwt', { session: false
     .then((movie) => {
       res.json(movie.Director);
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
+    .catch((error) => {
+      handleError(error, res);
     });
 });
 
@@ -135,34 +133,31 @@ app.post('/users',
             })
             .then((user) => { res.status(201).json(user); })
             .catch((error) => {
-              console.error(error);
-              res.status(500).send('Error: ' + error);
+              handleError(error, res);
             });
         }
       })
       .catch((error) => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
+        handleError(error, res);
       });
   });
 
 //allow users to update their info
-app.put('/users/:Username', (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate(
     { Username: req.params.Username },
     {
       $set: {
         Username: req.body.Username,
-        Password: req.body.Password,
+        Password: Users.hashPassword(req.body.Password),
         Email: req.body.Email,
         Birthday: req.body.Birthday,
       },
     },
     { new: true },
-    (err, updatedUser) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
+    (error, updatedUser) => {
+      if (error) {
+        handleError(error, res);
       } else {
         res.json(updatedUser);
       }
@@ -178,10 +173,9 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
       $push: { FavouriteMovies: req.params.MovieID },
     },
     { new: true },
-    (err, updatedUser) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
+    (error, updatedUser) => {
+      if (error) {
+        handleError(error, res);
       } else {
         res.json(updatedUser);
       }
@@ -189,18 +183,17 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
   );
 });
 
-// delete a movie to user's favourite list
+// delete a movie to user's favorite list
 app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate(
     { Username: req.params.Username },
     {
-      $pull: { FavouriteMovies: req.params.MovieID },
+      $pull: { FavoriteMovies: req.params.MovieID },
     },
     { new: true },
-    (err, updatedUser) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
+    (error, updatedUser) => {
+      if (error) {
+        handleError(error, res);
       } else {
         res.json(updatedUser);
       }
@@ -218,9 +211,8 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
         res.status(200).send(req.params.Username + ' was deleted.');
       }
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
+    .catch((error) => {
+      handleError(error, res);
     });
 });
 
