@@ -20,11 +20,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(morgan('common'));
 
-require('./auth')(app);
+
 
 const cors = require('cors');
 app.use(cors());
 
+require('./auth')(app);
 // let allowedOrigins = ['http://localhost:1234', 'http://localhost:8080', 'https://movio-app.herokuapp.com'];
 
 // app.use(cors({
